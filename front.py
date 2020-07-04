@@ -2,10 +2,15 @@ import telebot
 import logging
 #from pprint import pprint
 
-bot = telebot.TeleBot("TOKEN")
-group_id = number
+bot = telebot.TeleBot("")
+group_id = ...
 
 user_data = {}
+
+#import pickle
+
+
+
 
 class User:
     def __init__(self, first_name, user_name):
@@ -79,10 +84,11 @@ def registration_fail_success(message, the_question):
     if base64.b64encode(text_binary) == question_dict[the_question]:
         bot.send_message(group_id, user.first_name+ " @" + user.username + " зарегался. Это" + user.course, parse_mode="Markdown")
         bot.send_message(message.chat.id, "Вы успешно зарегистрированы! Ждите ответа через неделю" )
+        user.passed_captcha = True
     else:
-         msg = bot.send_message(message.chat.id, "Ответ не принят, ещё один случайный вопрос: ")
+         bot.send_message(message.chat.id, "Ответ не принят, ещё один случайный вопрос: ")
          bot.send_message(group_id, user.first_name+ " @" + user.username + " не ответил на капчу. Это" + user.course, parse_mode="Markdown")
-         bot.register_next_step_handler(msg, bare_captcha)
+         bare_captcha(message)
 
 question_dict = { "Имя первого декана матфака: " : b'0KHQtdGA0LPQtdC5',
                     "Имя декана матфака с 2015 года:" : b'0JLQu9Cw0LTQu9C10L0=',
@@ -91,5 +97,4 @@ question_dict = { "Имя первого декана матфака: " : b'0KHQ
 
 
 bot.polling()
-
 
