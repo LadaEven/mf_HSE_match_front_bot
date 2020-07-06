@@ -2,12 +2,24 @@ import telebot
 import logging
 #from pprint import pprint
 
-bot = telebot.TeleBot("1076370701:AAEe-ySnW9VtQgXjK04FaUE15ZxXI1xXn6Y")
-group_id = -447685531
+bot = telebot.TeleBot("")
+group_id = GROUP_NUMBER
 
-user_data = {}
 
-#import pickle
+
+#дамп, чтобы не потерялись данные
+import dill
+
+
+try:
+    with open("database.txt", "rb") as f:
+        user_data = dill.load(f)
+except EOFError:
+    user_data = {}
+
+
+
+#далее логика работы.
 
 class User:
     def __init__(self, user_name):
@@ -24,28 +36,36 @@ condition_dict = {
                        0 : " should enter name",
                         1 : "entered correct name, should enter course",
                        2 : "entered correct course, should answer the question",
-                       3 : "passed captcha, wait for answer" }
+                       3 : "passed captcha, thank you!" }
 
 logger = telebot.logger  # set logger
-telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
+telebot.logger.setLevel(logging.WARNING) # Outputs debug messages to console.
 
 @bot.message_handler(commands=['start'])
 def welcome_message(message):
     if(message.chat.id not in user_data):
-        bot.send_message(group_id, "начал работу")
-        bot.send_message(message.chat.id, "Напишите свои имя и фамилию. Обрабатываются только текстовые сообщения")
         user_data[message.chat.id] = User(message.from_user.username)
+        bot.send_message(message.chat.id, "Напишите свои имя и фамилию")
     else:
-        bot.send_message(message.chat.id, "вы уже начали регистрацию, вы остановились на шаге " + condition_dict[user_data[message.chat.id].condition])
+        bot.send_message(message.chat.id, "Вы уже начали регистрацию, вы остановились на шаге " + condition_dict[user_data[message.chat.id].condition])
 
 @bot.message_handler(commands=['help', 'about'])
 def help_about(message):
-    bot.send_message(message.chat.id ,"Вопросы, преложения, сообщить, что бот упал: пишите Ладе @OrangeLine. Код на github: LadaEven/mf_HSE_match_front_bot")
+    bot.send_message(message.chat.id ,"Вопросы, предложения, сообщить, что бот упал: пишите Ладе @OrangeLine." +
+    "Код на github: LadaEven/mf_HSE_match_front_bot" + " если хотите исправить данные, отправьте команду /reset")
     if(message.chat.id not in user_data):
         bot.send_message(message.chat.id, "Я бот, который зарегистрирует вас, а потом вам придёт два ника в телеграме, кто сделал также.")
     else:
-        bot.send_message(message.chat.id, "вы уже начали регистрацию, вы остановились на шаге " + condition_dict[user_data[message.chat.id].condition])
+        bot.send_message(message.chat.id, "Вы уже начали регистрацию, вы остановились на шаге " +
+        condition_dict[user_data[message.chat.id].condition])
 
+@bot.message_handler(commands=['reset'])
+def reset_registration(message):
+    if message.chat.id in user_data:
+        user_data[message.chat.id].condition = 0
+        bot.send_message(message.chat.id, "Окей, теперь можно перерегаться, напишите имя и фамилию")
+    else:
+        bot.send_message(message.chat.id, "вы ещё не регались")
 
 # markups to keyboard
 keyboard_course = telebot.types.ReplyKeyboardMarkup()
@@ -83,10 +103,12 @@ def change_condition(message):
             if captcha(message, user.question):
                 user.condition = 3
                 bot.send_message(group_id, user.first_name+ " @" + user.username + " зарегался. Это" + user.course)
-                bot.send_message(message.chat.id, "Вы успешно зарегистрированы! Ждите ответа через неделю" )
+                bot.send_message(message.chat.id, str(message.chat.id) +  " Вы успешно зарегистрированы! Ждите ответа через неделю" )
+                with open("database.txt", "wb") as f:
+                    dill.dump(user_data, f)
             else:
                 bot.send_message(message.chat.id, "вы не прошли капчу, попробуйте ещё раз")
-                bot.send_message(group_id, user.first_name+ " @" + user.username + " не ответил на капчу. Это" + user.course)
+                bot.send_message(group_id, str(message.chat.id)+ " " + user.first_name+ " @" + user.username + " не ответил на капчу. Это" + user.course)
 
 import base64
 
@@ -103,6 +125,4 @@ question_dict = { "Имя первого декана матфака: " : b'0KHQ
                     "Имя декана матфака с 2015 года:" : b'0JLQu9Cw0LTQu9C10L0=',
                     "Имя декана матфака с 2020 года:" : b'0KHQsNCx0LjRgA=='
                     }
-
-secret = ""
-bot.set_webhook("https://PlumpiePyTelegramBotAPI.pythonanywhere.com/{}".format(secret), max_connections=1)
+bot.polling()
