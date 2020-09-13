@@ -85,7 +85,7 @@ def reset_registration(message):
 
 # markups to keyboard
 keyboard_course = telebot.types.ReplyKeyboardMarkup()
-keyboard_course.row('1-2 курс', '3-4 курс, магистр, аспирант')
+keyboard_course.row('1 курс', '2-4 курс, магистр, аспирант')
 # markup to hide previous markup
 markupHide = telebot.types.ReplyKeyboardRemove(selective=False)
 
@@ -101,7 +101,7 @@ def change_condition(message):
                 bot.send_message(message.chat.id, "Записал имя и фамилию")
                 user.first_name = message.text
                 user.condition = 1
-                bot.send_message(message.chat.id, "Вы первый-второй курс или старше?", reply_markup=keyboard_course)
+                bot.send_message(message.chat.id, "Вы первый курс или старше?", reply_markup=keyboard_course)
             else:
                 bot.send_message(message.chat.id, "Вы ввели не два слова")
         elif condition == 1:
@@ -149,6 +149,6 @@ def captcha(message, the_question):
 
 question_dict = { "Имя первого декана матфака: " : b'0KHQtdGA0LPQtdC5',
                     "Имя декана матфака с 2015 года:" : b'0JLQu9Cw0LTQu9C10L0=',
-                    "Имя декана матфака с 2020 года:" : b'0KHQsNCx0LjRgA=='
+                    # "Имя декана матфака с 2020 года:" : b'0KHQsNCx0LjRgA=='
                     }
 bot.polling()
