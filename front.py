@@ -85,7 +85,7 @@ def reset_registration(message):
 
 # markups to keyboard
 keyboard_course = telebot.types.ReplyKeyboardMarkup()
-keyboard_course.row('1 курс', '2-4 курс, магистр, аспирант')
+keyboard_course.row('1 курс', '2й курс', '3-4й курс, магистр, аспирант')
 # markup to hide previous markup
 markupHide = telebot.types.ReplyKeyboardRemove(selective=False)
 
