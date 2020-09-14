@@ -2,8 +2,8 @@ import telebot
 import logging
 #from pprint import pprint
 
-bot = telebot.TeleBot("1076370701:AAHduMrZXQRkjLN8N2CTlhJlVKLv1l4GADE")
-group_id = -447685531
+bot = telebot.TeleBot("")
+group_id = ...
 
 
 #дамп, чтобы не потерялись данные
