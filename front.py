@@ -2,9 +2,8 @@ import telebot
 import logging
 #from pprint import pprint
 
-bot = telebot.TeleBot("")
-group_id = GROUP_ID
-
+bot = telebot.TeleBot("1076370701:AAHduMrZXQRkjLN8N2CTlhJlVKLv1l4GADE")
+group_id = -447685531
 
 
 #дамп, чтобы не потерялись данные
@@ -85,7 +84,7 @@ def reset_registration(message):
 
 # markups to keyboard
 keyboard_course = telebot.types.ReplyKeyboardMarkup()
-keyboard_course.row('1 курс', '2й курс', '3-4й курс, магистр, аспирант')
+keyboard_course.row("1й курс", "2й курс", "3-4й курс, магистр, аспирант")
 # markup to hide previous markup
 markupHide = telebot.types.ReplyKeyboardRemove(selective=False)
 
@@ -105,7 +104,7 @@ def change_condition(message):
             else:
                 bot.send_message(message.chat.id, "Вы ввели не два слова")
         elif condition == 1:
-            if message.text in ["1-2 курс", "3-4 курс, магистр, аспирант"]:
+            if message.text in ["1й курс", "2й курс", "3-4й курс, магистр, аспирант"]:
                 bot.send_message(message.chat.id, "Записал курс", reply_markup=markupHide)
                 user.course = message.text
                 bot.send_message(message.chat.id, "При желании, укажите дополнительные контакты: почта, инстаграм, вк. ")
