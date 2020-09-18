@@ -2,8 +2,8 @@ import telebot
 import logging
 #from pprint import pprint
 
-bot = telebot.TeleBot("")
-group_id = ...
+bot = telebot.TeleBot("лала")
+group_id = -лала
 
 
 #дамп, чтобы не потерялись данные
@@ -11,7 +11,7 @@ import dill
 
 
 try:
-    with open("database.bin", "rb") as f:
+    with open("database_september.bin", "rb") as f:
         user_data = dill.load(f)
 except EOFError:
     user_data = {}
@@ -50,8 +50,11 @@ def welcome_message(message):
         user_data[message.chat.id] = user
         if ( message.from_user.username ):
                 user.username = message.from_user.username
-        bot.send_message(message.chat.id, "Напишите свои имя и фамилию")
-        bot.send_message(group_id, str(message.chat.id)+ " " + user.username + " Начал регистрацию")
+        try:
+            bot.send_message(message.chat.id, "Напишите свои имя и фамилию")
+            bot.send_message(group_id, str(message.chat.id)+ " " + user.username + " Начал регистрацию")
+        except telebot.apihelper.ApiException:
+            print("blocked")
 
     else:
         bot.send_message(message.chat.id, "Вы уже начали регистрацию, вы остановились на шаге " + condition_dict[user_data[message.chat.id].condition])
@@ -61,7 +64,7 @@ def help(message):
     bot.send_message(message.chat.id ,"Вопросы, предложения, сообщить, что бот упал: пишите Ладе @OrangeLine.")
 
     if(message.chat.id not in user_data):
-        bot.send_message("такие дела")
+        bot.send_message(message.chat.id, "такие дела")
     else:
         bot.send_message(message.chat.id, "Вы уже начали регистрацию, вы остановились на шаге " + condition_dict[user_data[message.chat.id].condition]+
          " если хотите исправить данные, отправьте команду /reset")
@@ -151,3 +154,6 @@ question_dict = { "Имя первого декана матфака: " : b'0KHQ
                     # "Имя декана матфака с 2020 года:" : b'0KHQsNCx0LjRgA=='
                     }
 bot.polling()
+
+
+
